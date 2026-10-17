@@ -49,12 +49,22 @@ src/
 │   └── App.tsx           # Componente raiz com Bootstrapper (Auth)
 ├── shared/               # O que é genérico e reutilizável (não tem regra de negócio)
 │   ├── components/       # UI (Button, Layout, Spinner)
+│   │   ├── layout/       # Header, Footer, Layout
+│   │   └── ui/           # Button, Input, etc.
 │   ├── lib/              # Axios configurado, Utils, Setup de Testes
 │   └── types/            # Tipagens globais da API (DTOs)
 └── features/             # Domínios de negócio
     ├── auth/             # Login, Cadastro, Store (Zustand), API e Guards
+    │   ├── api/          # Chamadas HTTP de autenticação
+    │   ├── components/   # ProtectedRoute, GuestRoute
+    │   ├── hooks/        # useAuthBootstrap
+    │   ├── pages/        # Login, Register
+    │   └── store.ts      # Zustand Store
     ├── home/             # Página inicial (Landing Page)
     └── products/         # Catálogo, API, Cards e Detalhes
+        ├── api/          # Chamadas HTTP de produtos
+        ├── components/   # ProductCard
+        └── pages/        # ProductList
 
 
 ```

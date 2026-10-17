@@ -40,3 +40,30 @@ export interface PageResponse<T> {
   number: number;
   size: number;
 }
+
+// ─── Carrinho ──────────────────────────────────────────────────
+
+export interface CartItemResponse {
+  id: number;
+  productId: number;
+  productName: string;
+  imageUrl: string | null;
+  unitPrice: number;
+  quantity: number;
+  subtotal: number;
+}
+
+export interface CartResponse {
+  items: CartItemResponse[];
+  total: number;
+  itemCount: number;
+}
+
+export interface AddToCartRequest {
+  productId: number;
+  quantity: number;
+}
+
+export interface UpdateCartItemRequest {
+  quantity: number;
+}

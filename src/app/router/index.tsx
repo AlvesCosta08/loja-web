@@ -10,6 +10,10 @@ const Login = lazy(() => import('@/features/auth/pages/Login').then(m => ({ defa
 const Register = lazy(() => import('@/features/auth/pages/Register').then(m => ({ default: m.Register })));
 const ProductList = lazy(() => import('@/features/products/pages/ProductList').then(m => ({ default: m.ProductList })));
 
+// 1. Import adicionado para a página de detalhes
+const ProductDetail = lazy(() => import('@/features/products/pages/ProductDetail').then(m => ({ default: m.ProductDetail })));
+const NotFound = lazy(() => import('@/shared/pages/NotFound').then(m => ({ default: m.NotFound })));
+
 const PageLoader = () => (
   <div className="flex h-64 items-center justify-center">
     <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-600 border-t-transparent" />
@@ -50,6 +54,15 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ) 
       },
+      // 2. Rota de Detalhes do Produto adicionada
+      { 
+        path: '/products/:id', 
+        element: (
+          <ProtectedRoute>
+            <Suspense fallback={<PageLoader />}><ProductDetail /></Suspense>
+          </ProtectedRoute>
+        ) 
+      },
       { 
         path: '/cart', 
         element: (
@@ -59,7 +72,13 @@ export const router = createBrowserRouter([
         ) 
       },
 
-      // Rota de fallback para 404
+      // 3. Rota 404 (NotFound) adicionada
+      { 
+        path: '/404', 
+        element: <Suspense fallback={<PageLoader />}><NotFound /></Suspense> 
+      },
+      
+      // Rota de fallback (redireciona qualquer URL desconhecida para 404)
       { path: '*', element: <Navigate to="/404" replace /> },
     ],
   },

@@ -9,10 +9,11 @@ const Home = lazy(() => import('@/features/home/pages/Home').then(m => ({ defaul
 const Login = lazy(() => import('@/features/auth/pages/Login').then(m => ({ default: m.Login })));
 const Register = lazy(() => import('@/features/auth/pages/Register').then(m => ({ default: m.Register })));
 const ProductList = lazy(() => import('@/features/products/pages/ProductList').then(m => ({ default: m.ProductList })));
-
-// 1. Import adicionado para a página de detalhes
 const ProductDetail = lazy(() => import('@/features/products/pages/ProductDetail').then(m => ({ default: m.ProductDetail })));
 const NotFound = lazy(() => import('@/shared/pages/NotFound').then(m => ({ default: m.NotFound })));
+
+// 1. Import adicionado para a página do Carrinho
+const Cart = lazy(() => import('@/features/cart/pages/Cart').then(m => ({ default: m.Cart })));
 
 const PageLoader = () => (
   <div className="flex h-64 items-center justify-center">
@@ -54,7 +55,6 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ) 
       },
-      // 2. Rota de Detalhes do Produto adicionada
       { 
         path: '/products/:id', 
         element: (
@@ -63,16 +63,17 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ) 
       },
+      // 2. Rota do Carrinho atualizada com a página real
       { 
         path: '/cart', 
         element: (
           <ProtectedRoute>
-            <div className="p-10 text-center border-2 border-dashed rounded-xl">Carrinho em breve (Fase 5)</div>
+            <Suspense fallback={<PageLoader />}><Cart /></Suspense>
           </ProtectedRoute>
         ) 
       },
 
-      // 3. Rota 404 (NotFound) adicionada
+      // Rota 404 (NotFound)
       { 
         path: '/404', 
         element: <Suspense fallback={<PageLoader />}><NotFound /></Suspense> 

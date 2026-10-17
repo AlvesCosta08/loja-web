@@ -1,15 +1,32 @@
 import { useParams, Link } from 'react-router';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { productApi } from '@/features/products/api/api';
+import { cartApi } from '@/features/cart/api/api';
 import { Button } from '@/shared/components/ui/Button';
 
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
+  const queryClient = useQueryClient();
 
+  // 1. Busca o produto
   const { data: product, isLoading, isError } = useQuery({
     queryKey: ['product', id],
     queryFn: () => productApi.getById(id as string),
     enabled: !!id,
+  });
+
+  // 2. Mutation para adicionar ao carrinho
+  const addToCartMutation = useMutation({
+    mutationFn: () => cartApi.addItem({ productId: Number(id), quantity: 1 }),
+    onSuccess: () => {
+      // Invalida o cache do carrinho para atualizar o Header e a página do carrinho
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+      toast.success('Produto adicionado ao carrinho!');
+    },
+    onError: () => {
+      toast.error('Erro ao adicionar ao carrinho.');
+    }
   });
 
   if (isLoading) {
@@ -72,8 +89,12 @@ export function ProductDetail() {
           </div>
 
           <div className="mt-8">
-            <Button className="w-full" onClick={() => alert('Em breve: Integração com o carrinho!')}>
-              Adicionar ao Carrinho
+            <Button 
+              className="w-full" 
+              onClick={() => addToCartMutation.mutate()}
+              disabled={addToCartMutation.isPending || product.stock === 0}
+            >
+              {addToCartMutation.isPending ? 'Adicionando...' : 'Adicionar ao Carrinho'}
             </Button>
           </div>
         </div>

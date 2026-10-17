@@ -1,33 +1,28 @@
-# React + TypeScript + Vite
+# 🛒 Loja Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Frontend SPA (Single Page Application) para o e-commerce **Loja API**. Desenvolvido com as práticas mais modernas do mercado, focando em performance, escalabilidade, testabilidade (TDD) e arquitetura limpa.
 
-Currently, two official plugins are available:
+## 🚀 Tecnologias Utilizadas
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Core:** React 19 + TypeScript + Vite
+- **Estilização:** Tailwind CSS 4
+- **Roteamento:** React Router 7 (com Lazy Loading)
+- **Estado Global:** Zustand
+- **Server State / Cache:** TanStack Query (React Query)
+- **HTTP Client:** Axios (com interceptors para JWT e tratamento de erro)
+- **Formulários:** React Hook Form + Zod (validação de esquema)
+- **Feedback Visual:** Sonner (Toasts)
+- **Testes:** Vitest + React Testing Library (TDD)
 
-## React Compiler
+## 🏗️ Arquitetura (Feature-Sliced Design)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+O projeto abandona a estrutura "flat" tradicional (`components`, `pages`, `hooks`) e adota o padrão **Feature-Sliced Design**, muito utilizado em grandes empresas para evitar acoplamento e facilitar a escalabilidade.
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
-# loja-web
+```text
+src/
+├── app/                  # Configuração global, Providers e Rotas
+├── shared/               # Componentes UI, Hooks e Utils genéricos
+├── features/             # Domínios de negócio (onde a mágica acontece)
+│   ├── auth/             # Login, Cadastro, Store, API de Autenticação
+│   ├── home/             # Página inicial
+│   └── products/         # Catálogo e detalhes (em desenvolvimento)

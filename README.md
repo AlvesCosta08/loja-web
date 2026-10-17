@@ -1,57 +1,60 @@
 # 🛒 Loja Web
 
-![React](https://img.shields.io/badge/React-19.0-61DAFB?logo=react&logoColor=black)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?logo=typescript&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?logo=vite&logoColor=white)
-![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?logo=tailwind-css&logoColor=white)
-![Vitest](https://img.shields.io/badge/Tested_with-Vitest-6E9F18?logo=vitest&logoColor=white)
+> Frontend SPA (Single Page Application) para o e-commerce **Loja API**. Desenvolvido com **React 19**, **TypeScript** e **Tailwind CSS 4**, focando em performance, escalabilidade, testabilidade (TDD) e arquitetura limpa.
 
-Frontend SPA (Single Page Application) para o e-commerce **Loja API**. Desenvolvido com as práticas mais modernas do mercado, focando em performance, escalabilidade, testabilidade (TDD) e arquitetura limpa.
-
-## 📑 Sumário
-
-1. [Tecnologias Utilizadas](#-tecnologias-utilizadas)
-2. [Arquitetura (Feature-Sliced Design)](#-arquitetura-feature-sliced-design)
-3. [Pré-requisitos](#-pré-requisitos)
-4. [Como executar o projeto](#-como-executar-o-projeto)
-5. [Testes (TDD)](#-testes-tdd)
-6. [Progresso do Roadmap](#-progresso-do-roadmap)
+<p align="left">
+  <img src="https://img.shields.io/badge/React-19.0-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React 19" />
+  <img src="https://img.shields.io/badge/TypeScript-5.6-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Vite-6.0-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Zustand-State-764ABC?style=for-the-badge&logo=react&logoColor=white" alt="Zustand" />
+  <img src="https://img.shields.io/badge/TanStack_Query-Cache-FF4154?style=for-the-badge&logo=reactquery&logoColor=white" alt="TanStack Query" />
+  <img src="https://img.shields.io/badge/Vitest-TDD-6E9F18?style=for-the-badge&logo=vitest&logoColor=white" alt="Vitest" />
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT" />
+</p>
 
 ---
 
-## 🚀 Tecnologias Utilizadas
+## 📖 Sobre o projeto
 
-- **Core:** React 19 + TypeScript + Vite
-- **Estilização:** Tailwind CSS 4
-- **Roteamento:** React Router 7 (com Lazy Loading)
-- **Estado Global:** Zustand
-- **Server State / Cache:** TanStack Query (React Query)
-- **HTTP Client:** Axios (com interceptors para JWT e tratamento de erro global)
-- **Formulários:** React Hook Form + Zod (validação de esquema)
-- **Feedback Visual:** Sonner (Toasts)
-- **Testes:** Vitest + React Testing Library (TDD)
-- **Linter:** Oxlint (Rust-based, ultra-rápido)
+Esta é a interface do e-commerce **Loja API** (backend em Java/Spring Boot). O projeto abandona a estrutura "flat" tradicional e adota o **Feature-Sliced Design (FSD)** para organizar o código por domínios de negócio.
+
+O grande diferencial deste frontend é a aplicação de **TDD (Test-Driven Development)** desde o primeiro commit. A lógica de negócio (como a Store de autenticação e componentes de UI) é testada antes mesmo da interface existir.
+
+🔗 **Backend do projeto:** [Loja API (Java + Spring Boot)](https://github.com/AlvesCosta08/loja-api)
+
+---
+
+## ✨ Funcionalidades Implementadas
+
+- ✅ **Autenticação completa** (Login, Cadastro e Logout)
+- ✅ **Persistência de Sessão** com JWT (validação via `/users/me` no reload)
+- ✅ **Proteção de Rotas** (`ProtectedRoute`, `GuestRoute` e `AdminRoute` preparado)
+- ✅ **Interceptor Axios** para injeção automática do Bearer Token e tratamento global de erros 401
+- ✅ **Catálogo de Produtos** com React Query (paginação e cache no client)
+- ✅ **Busca de Produtos** sincronizada com a URL (`useSearchParams`)
+- ✅ **UI/UX Profissional** com Tailwind CSS 4, Toasts (Sonner) e Feedback visual de loading/erro
 
 ---
 
 ## 🏗️ Arquitetura (Feature-Sliced Design)
 
-O projeto abandona a estrutura "flat" tradicional (`components`, `pages`, `hooks`) e adota o padrão **Feature-Sliced Design**, muito utilizado em grandes empresas para evitar acoplamento e facilitar a escalabilidade.
+O projeto utiliza a seguinte estrutura para evitar acoplamento e facilitar a escalabilidade:
 
 ```text
 src/
-├── app/                  # Configuração global, Providers e Rotas
-│   ├── providers/        # React Query, Sonner, etc.
-│   ├── router/           # Definição de rotas com Lazy Loading
-│   └── App.tsx           # Componente raiz com Bootstrapper de Auth
-├── shared/               # O que é genérico e reutilizável
-│   ├── components/       # UI (Button, Layout), Layouts
-│   ├── lib/              # Axios, Utils, Setup de Testes
+├── app/                  # Configuração global da aplicação
+│   ├── providers/        # React Query, Sonner, Theme
+│   ├── router/           # Rotas com Lazy Loading e Suspense
+│   └── App.tsx           # Componente raiz com Bootstrapper (Auth)
+├── shared/               # O que é genérico e reutilizável (não tem regra de negócio)
+│   ├── components/       # UI (Button, Layout, Spinner)
+│   ├── lib/              # Axios configurado, Utils, Setup de Testes
 │   └── types/            # Tipagens globais da API (DTOs)
-└── features/             # Domínios de negócio (onde a mágica acontece)
+└── features/             # Domínios de negócio
     ├── auth/             # Login, Cadastro, Store (Zustand), API e Guards
-    ├── home/             # Página inicial
-    └── products/         # Catálogo e detalhes (em desenvolvimento)
+    ├── home/             # Página inicial (Landing Page)
+    └── products/         # Catálogo, API, Cards e Detalhes
 
 
 ```

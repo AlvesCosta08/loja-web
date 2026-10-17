@@ -1,13 +1,14 @@
 import { lazy, Suspense } from 'react';
-import { createBrowserRouter } from 'react-router';
+import { createBrowserRouter, Navigate } from 'react-router';
 import { Layout } from '@/shared/components/layout/Layout';
 import { ProtectedRoute } from '@/features/auth/components/ProtectedRoute';
 import { GuestRoute } from '@/features/auth/components/GuestRoute';
 
-// Lazy loading das páginas para melhor performance
+// Lazy loading das páginas
 const Home = lazy(() => import('@/features/home/pages/Home').then(m => ({ default: m.Home })));
 const Login = lazy(() => import('@/features/auth/pages/Login').then(m => ({ default: m.Login })));
 const Register = lazy(() => import('@/features/auth/pages/Register').then(m => ({ default: m.Register })));
+const ProductList = lazy(() => import('@/features/products/pages/ProductList').then(m => ({ default: m.ProductList })));
 
 const PageLoader = () => (
   <div className="flex h-64 items-center justify-center">
@@ -21,7 +22,6 @@ export const router = createBrowserRouter([
     children: [
       // Rota Pública
       { path: '/', element: <Suspense fallback={<PageLoader />}><Home /></Suspense> },
-      { path: '/products', element: <div className="p-10 text-center border-2 border-dashed rounded-xl">Catálogo em breve</div> },
       
       // Rotas de Autenticação (Apenas para quem NÃO está logado)
       { 
@@ -43,6 +43,14 @@ export const router = createBrowserRouter([
 
       // Rotas Protegidas (Apenas para quem ESTÁ logado)
       { 
+        path: '/products', 
+        element: (
+          <ProtectedRoute>
+            <Suspense fallback={<PageLoader />}><ProductList /></Suspense>
+          </ProtectedRoute>
+        ) 
+      },
+      { 
         path: '/cart', 
         element: (
           <ProtectedRoute>
@@ -50,6 +58,9 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ) 
       },
+
+      // Rota de fallback para 404
+      { path: '*', element: <Navigate to="/404" replace /> },
     ],
   },
 ]);

@@ -8,7 +8,7 @@ export function Layout() {
   const navigate = useNavigate();
   const { isAuthenticated, user, clearAuth } = useAuthStore();
 
-  // 1. Busca o carrinho para mostrar o contador no Header
+  // Busca o carrinho para mostrar o contador no Header
   const { data: cart } = useQuery({
     queryKey: ['cart'],
     queryFn: cartApi.getCart,
@@ -20,7 +20,7 @@ export function Layout() {
     navigate('/login');
   };
 
-  // 2. Função para deixar o link ativo em azul
+  // Função para deixar o link ativo em azul
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `text-sm font-medium transition-colors ${
       isActive ? 'text-brand-600' : 'text-gray-700 hover:text-brand-600'
@@ -37,10 +37,17 @@ export function Layout() {
             <NavLink to="/" className={navLinkClass}>Início</NavLink>
             <NavLink to="/products" className={navLinkClass}>Produtos</NavLink>
             
-            {/* 3. Contador do Carrinho (Só aparece se estiver logado) */}
+            {/* Contador do Carrinho (Só aparece se estiver logado) */}
             {isAuthenticated && (
               <NavLink to="/cart" className={navLinkClass}>
                 Carrinho {cart && cart.itemCount > 0 && `(${cart.itemCount})`}
+              </NavLink>
+            )}
+
+            {/* Link de Meus Pedidos (Só aparece se estiver logado) */}
+            {isAuthenticated && (
+              <NavLink to="/orders" className={navLinkClass}>
+                Meus Pedidos
               </NavLink>
             )}
           </nav>

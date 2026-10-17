@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router'; // <-- useNavigate importado
 import { toast } from 'sonner';
 import { AxiosError } from 'axios';
 import { cartApi } from '@/features/cart/api/api';
@@ -7,6 +7,7 @@ import { Button } from '@/shared/components/ui/Button';
 
 export function Cart() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate(); // <-- Hook instanciado
 
   const { data: cart, isLoading } = useQuery({
     queryKey: ['cart'],
@@ -21,7 +22,6 @@ export function Cart() {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
     },
     onError: (error: AxiosError<{ message: string }>) => {
-      // Lê a mensagem exata que o backend Java enviou
       const message = error.response?.data?.message || 'Erro ao atualizar a quantidade.';
       toast.error(message);
     },
@@ -128,7 +128,13 @@ export function Cart() {
       </div>
 
       <div className="flex justify-end">
-        <Button className="w-full px-8 py-3 text-lg sm:w-auto">Finalizar Compra</Button>
+        {/* O onClick navega para o checkout */}
+        <Button 
+          className="w-full px-8 py-3 text-lg sm:w-auto"
+          onClick={() => navigate('/checkout')}
+        >
+          Finalizar Compra
+        </Button>
       </div>
     </div>
   );

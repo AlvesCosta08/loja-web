@@ -11,9 +11,10 @@ const Register = lazy(() => import('@/features/auth/pages/Register').then(m => (
 const ProductList = lazy(() => import('@/features/products/pages/ProductList').then(m => ({ default: m.ProductList })));
 const ProductDetail = lazy(() => import('@/features/products/pages/ProductDetail').then(m => ({ default: m.ProductDetail })));
 const NotFound = lazy(() => import('@/shared/pages/NotFound').then(m => ({ default: m.NotFound })));
-
-// 1. Import adicionado para a página do Carrinho
 const Cart = lazy(() => import('@/features/cart/pages/Cart').then(m => ({ default: m.Cart })));
+
+// 1. Import adicionado para a página de Checkout
+const Checkout = lazy(() => import('@/features/checkout/pages/Checkout').then(m => ({ default: m.Checkout })));
 
 const PageLoader = () => (
   <div className="flex h-64 items-center justify-center">
@@ -63,12 +64,20 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ) 
       },
-      // 2. Rota do Carrinho atualizada com a página real
       { 
         path: '/cart', 
         element: (
           <ProtectedRoute>
             <Suspense fallback={<PageLoader />}><Cart /></Suspense>
+          </ProtectedRoute>
+        ) 
+      },
+      // 2. Rota de Checkout adicionada
+      { 
+        path: '/checkout', 
+        element: (
+          <ProtectedRoute>
+            <Suspense fallback={<PageLoader />}><Checkout /></Suspense>
           </ProtectedRoute>
         ) 
       },

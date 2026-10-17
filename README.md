@@ -26,3 +26,13 @@ src/
 │   ├── auth/             # Login, Cadastro, Store, API de Autenticação
 │   ├── home/             # Página inicial
 │   └── products/         # Catálogo e detalhes (em desenvolvimento)
+
+```
+
+✅ Progresso do Roadmap
+☑ Fase 0: Setup Vite, Tailwind 4, Axios e Arquitetura Base.
+☑ Fase 1: Autenticação (Login, Cadastro, JWT, Zustand, Guards de Rota).
+□ Fase 2: Catálogo de Produtos (Lista, Busca e Paginação).
+□ Fase 3: Detalhes do Produto e Carrinho.
+□ Fase 4: Checkout e Pagamentos (Pix/Cartão).
+□ Fase 5: Painel Administrativo.

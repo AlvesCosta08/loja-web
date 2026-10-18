@@ -24,7 +24,7 @@ export function AdminUsers() {
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-600 border-t-transparent" />
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
       </div>
     );
   }
@@ -51,7 +51,8 @@ export function AdminUsers() {
                 <td className="px-6 py-4">{user.email}</td>
                 <td className="px-6 py-4">
                   <select
-                    aria-label={`Role do usuário ${user.id}`}
+                    /* 👇 ALTERAÇÃO AQUI: user.name em vez de user.id */
+                    aria-label={`Role do usuário ${user.name}`}
                     value={user.role}
                     disabled={roleMutation.isPending}
                     onChange={(e) =>
@@ -60,7 +61,7 @@ export function AdminUsers() {
                         role: e.target.value as Role,
                       })
                     }
-                    className="rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-brand-500 focus:outline-none"
+                    className="rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none"
                   >
                     <option value="CUSTOMER">Cliente (Customer)</option>
                     <option value="ADMIN">Administrador (Admin)</option>

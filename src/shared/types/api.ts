@@ -1,8 +1,10 @@
+// src/shared/types/api.ts
+
 // Backend usa CUSTOMER | ADMIN
 export type Role = 'CUSTOMER' | 'ADMIN';
 
 export interface UserResponse {
-  id: string;
+  id: number; // number, não string
   name: string;
   email: string;
   role: Role;
@@ -21,6 +23,7 @@ export interface ProductResponse {
   category: string;
   imageUrl?: string | null;
 }
+
 export interface PageResponse<T> {
   content: T[];
   totalElements: number;
@@ -39,11 +42,13 @@ export interface CartItemResponse {
   quantity: number;
   subtotal: number;
 }
+
 export interface CartResponse {
   items: CartItemResponse[];
   total: number;
   itemCount: number;
 }
+
 export interface AddToCartRequest { productId: number; quantity: number; }
 export interface UpdateCartItemRequest { quantity: number; }
 
@@ -89,7 +94,6 @@ export interface OrderResponse {
 }
 
 // ─── Pagamentos ───────────────────────────────────────────────
-// O backend envia apenas PENDING e CONFIRMED (não existe PAID/FAILED/EXPIRED)
 export type PaymentMethod = 'PIX' | 'CREDIT_CARD';
 export type PaymentStatus = 'PENDING' | 'CONFIRMED';
 

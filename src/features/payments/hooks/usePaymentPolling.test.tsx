@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type ReactNode } from 'react';
 import { usePaymentPolling } from './usePaymentPolling';
@@ -22,44 +22,64 @@ function wrapper({ children }: { children: ReactNode }) {
 
 describe('usePaymentPolling', () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     vi.useFakeTimers();
   });
 
   afterEach(() => {
-    vi.useRealTimers();
     vi.clearAllMocks();
+    vi.useRealTimers();
   });
 
   it('não busca quando enabled=false ou id=null', () => {
-    renderHook(() => usePaymentPolling(1, false), { wrapper });
-    renderHook(() => usePaymentPolling(null, true), { wrapper });
+    act(() => {
+      renderHook(() => usePaymentPolling(1, false), { wrapper });
+      renderHook(() => usePaymentPolling(null, true), { wrapper });
+    });
+
     expect(paymentApi.getPayment).not.toHaveBeenCalled();
   });
 
   it('faz polling contínuo enquanto PENDING', async () => {
     vi.mocked(paymentApi.getPayment).mockResolvedValue(fake('PENDING'));
-    renderHook(() => usePaymentPolling(1, true), { wrapper });
 
-    // Aguarda o React Query processar a chamada inicial
-    await vi.waitFor(() => expect(paymentApi.getPayment).toHaveBeenCalledTimes(1));
-    
-    // Avança o tempo para disparar o refetchInterval de 3000ms
-    await vi.advanceTimersByTimeAsync(3000);
-    
-    // Aguarda o React Query processar a segunda chamada
-    await vi.waitFor(() => expect(paymentApi.getPayment).toHaveBeenCalledTimes(2));
+    const { result } = await act(async () =>
+      renderHook(() => usePaymentPolling(1, true), { wrapper })
+    );
+
+    // 👇 act + vi.waitFor: embrulha o setState E espera a cadeia de microtasks
+    await act(async () => {
+      await vi.waitFor(() => expect(result.current.data?.status).toBe('PENDING'));
+    });
+
+    expect(paymentApi.getPayment).toHaveBeenCalledTimes(1);
+
+    // avança 3s e espera o refetch dentro de act
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(3000);
+      await vi.waitFor(() => expect(paymentApi.getPayment).toHaveBeenCalledTimes(2));
+      await vi.waitFor(() => expect(result.current.data?.status).toBe('PENDING'));
+    });
   });
 
   it('para de fazer polling quando CONFIRMED', async () => {
     vi.mocked(paymentApi.getPayment).mockResolvedValueOnce(fake('CONFIRMED'));
-    renderHook(() => usePaymentPolling(1, true), { wrapper });
 
-    await vi.waitFor(() => expect(paymentApi.getPayment).toHaveBeenCalledTimes(1));
-    
-    // Avança 10 segundos (bem mais que o intervalo de 3s). Como o status é CONFIRMED,
-    // o hook deve retornar false e não fazer novas chamadas.
-    await vi.advanceTimersByTimeAsync(10000);
-    
+    const { result } = await act(async () =>
+      renderHook(() => usePaymentPolling(1, true), { wrapper })
+    );
+
+    await act(async () => {
+      await vi.waitFor(() => expect(result.current.data?.status).toBe('CONFIRMED'));
+    });
+
+    expect(paymentApi.getPayment).toHaveBeenCalledTimes(1);
+
+    // avança 10s — não deve refazer chamada porque CONFIRMED para o polling
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10000);
+    });
+
     expect(paymentApi.getPayment).toHaveBeenCalledTimes(1);
   });
 });

@@ -31,9 +31,12 @@ O grande diferencial deste frontend é a aplicação de **TDD (Test-Driven Devel
 - ✅ **Persistência de Sessão** com JWT (validação via `/users/me` no reload)
 - ✅ **Proteção de Rotas** (`ProtectedRoute`, `GuestRoute` e `AdminRoute` preparado)
 - ✅ **Interceptor Axios** para injeção automática do Bearer Token e tratamento global de erros 401
-- ✅ **Catálogo de Produtos** com React Query (paginação e cache no client)
-- ✅ **Busca de Produtos** sincronizada com a URL (`useSearchParams`)
-- ✅ **UI/UX Profissional** com Tailwind CSS 4, Toasts (Sonner) e Feedback visual de loading/erro
+- ✅ **Catálogo de Produtos** com React Query (paginação e busca sincronizada com a URL)
+- ✅ **Detalhes do Produto** com imagem, descrição, estoque e preço
+- ✅ **Carrinho de Compras** persistente (adicionar, atualizar quantidade, remover itens)
+- ✅ **Checkout** com cálculo de frete via CEP e criação de pedido
+- ✅ **Histórico de Pedidos** com status, data e detalhes dos itens
+- ✅ **UI/UX Profissional** com Tailwind CSS 4, Toasts (Sonner), Lazy Loading e Feedback visual
 
 ---
 
@@ -47,7 +50,7 @@ src/
 │   ├── providers/        # React Query, Sonner, Theme
 │   ├── router/           # Rotas com Lazy Loading e Suspense
 │   └── App.tsx           # Componente raiz com Bootstrapper (Auth)
-├── shared/               # O que é genérico e reutilizável (não tem regra de negócio)
+├── shared/               # O que é genérico e reutilizável
 │   ├── components/       # UI (Button, Layout, Spinner)
 │   │   ├── layout/       # Header, Footer, Layout
 │   │   └── ui/           # Button, Input, etc.
@@ -55,34 +58,9 @@ src/
 │   └── types/            # Tipagens globais da API (DTOs)
 └── features/             # Domínios de negócio
     ├── auth/             # Login, Cadastro, Store (Zustand), API e Guards
-    │   ├── api/          # Chamadas HTTP de autenticação
-    │   ├── components/   # ProtectedRoute, GuestRoute
-    │   ├── hooks/        # useAuthBootstrap
-    │   ├── pages/        # Login, Register
-    │   └── store.ts      # Zustand Store
+    ├── cart/             # Carrinho (API, Página, Controles)
+    ├── checkout/         # Finalização de compra (CEP, Frete)
     ├── home/             # Página inicial (Landing Page)
-    └── products/         # Catálogo, API, Cards e Detalhes
-        ├── api/          # Chamadas HTTP de produtos
-        ├── components/   # ProductCard
-        └── pages/        # ProductList
-
-
-```
-    🧪 Testes (TDD)
-O projeto utiliza a abordagem TDD (Test-Driven Development). Os componentes e lógicas de negócio (como o Zustand Store) são testados antes mesmo da interface existir.
-
-Para rodar a suíte de testes:
-
-bash
-# Modo watch (roda e observa mudanças durante o desenvolvimento)
-npm run test
-
-# Interface visual do Vitest (Dashboard no navegador)
-npm run test:ui
-📈 Progresso do Roadmap
-☑ Fase 0: Setup Vite, Tailwind 4, Axios e Arquitetura Base.
-☑ Fase 1: Autenticação (Login, Cadastro, JWT, Zustand, Guards de Rota).
-□ Fase 2: Catálogo de Produtos (Lista, Busca e Paginação).
-□ Fase 3: Detalhes do Produto e Carrinho.
-□ Fase 4: Checkout e Pagamentos (Pix/Cartão).
-□ Fase 5: Painel Administrativo.
+    ├── orders/           # Histórico de Pedidos (API, Página)
+    ├── products/         # Catálogo, Detalhes, API e Cards
+    └── shipping/         # API de cálculo de frete

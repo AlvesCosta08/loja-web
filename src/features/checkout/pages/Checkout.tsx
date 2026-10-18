@@ -48,10 +48,10 @@ export function Checkout() {
   // 3. Mutation para criar o pedido
   const orderMutation = useMutation({
     mutationFn: () => orderApi.createOrder(cep),
-    onSuccess: () => {
+    onSuccess: (order) => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
-      toast.success('Pedido realizado com sucesso!');
-      navigate('/');
+      toast.success('Pedido realizado! Escolha a forma de pagamento.');
+      navigate(`/orders/${order.id}/pay`);
     },
     onError: (error: AxiosError<{ message: string }>) => {
       toast.error(error.response?.data?.message || 'Erro ao criar o pedido.');

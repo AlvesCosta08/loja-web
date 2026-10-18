@@ -11,6 +11,7 @@ export interface ProductListParams {
 export const productApi = {
   list: (params: ProductListParams = {}) =>
     api.get<PageResponse<ProductResponse>>('/products', { params }).then((r) => r.data),
-  getById: (id: string) =>
+    
+  getById: (id: number) =>
     api.get<ProductResponse>(`/products/${id}`).then((r) => r.data),
 };

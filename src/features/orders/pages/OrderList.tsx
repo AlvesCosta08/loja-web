@@ -2,15 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router';
 import { orderApi } from '@/features/orders/api/api';
 import { Button } from '@/shared/components/ui/Button';
+import type { PageResponse, OrderResponse } from '@/shared/types/api';
 
 export function OrderList() {
   const { data: rawData, isLoading, isError } = useQuery({
     queryKey: ['orders'],
     queryFn: orderApi.getOrders,
   });
-
-  // 1. LOG DE DEBUG: Abra o console do navegador (F12) para ver o que o Java enviou
-  console.log('O que o backend retornou:', rawData);
 
   if (isLoading) {
     return (
@@ -28,20 +26,11 @@ export function OrderList() {
     );
   }
 
-  // 2. BLINDAGEM: Garante que 'orders' seja sempre um array
-  let orders: any[] = [];
-  
-  if (Array.isArray(rawData)) {
-    orders = rawData;
-  } else if (rawData && typeof rawData === 'object') {
-    // Tenta achar a lista em possíveis propriedades comuns
-    const possibleList = (rawData as any).content || (rawData as any).orders || (rawData as any).data;
-    if (Array.isArray(possibleList)) {
-      orders = possibleList;
-    }
-  }
+  // O backend retorna Page<OrderResponse>, então os itens ficam em .content
+  const orders: OrderResponse[] = Array.isArray(rawData) 
+    ? rawData 
+    : (rawData as unknown as PageResponse<OrderResponse>)?.content || [];
 
-  // 3. Fallback visual se a lista estiver vazia
   if (orders.length === 0) {
     return (
       <div className="mt-10 rounded-xl border-2 border-dashed border-gray-300 p-12 text-center">
@@ -54,21 +43,20 @@ export function OrderList() {
     );
   }
 
-  // 4. Renderização dos Pedidos (com tipagem any para segurança)
   return (
     <div className="mx-auto mt-6 max-w-4xl space-y-6">
       <h1 className="text-2xl font-bold text-gray-800">Meus Pedidos</h1>
 
       <div className="space-y-4">
-        {orders.map((order: any) => {
-          const orderDate = new Date(order.createdAt || order.data).toLocaleDateString('pt-BR', {
+        {orders.map((order) => {
+          const orderDate = new Date(order.createdAt).toLocaleDateString('pt-BR', {
             day: '2-digit', month: '2-digit', year: 'numeric',
             hour: '2-digit', minute: '2-digit'
           });
 
           const formattedTotal = new Intl.NumberFormat('pt-BR', {
             style: 'currency', currency: 'BRL',
-          }).format(order.total || order.valorTotal || 0);
+          }).format(Number(order.total));
 
           const statusColor = 
             order.status === 'PAID' ? 'bg-green-100 text-green-700' : 
@@ -98,16 +86,23 @@ export function OrderList() {
               </div>
 
               <div className="mt-4 space-y-2">
-                {order.items && order.items.map((item: any) => (
+                {order.items?.map((item) => (
                   <div key={item.id} className="flex justify-between text-sm text-gray-600">
                     <span>
                       <span className="font-medium text-gray-800">{item.quantity}x</span> {item.productName}
                     </span>
                     <span>
-                      {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.subtotal || 0)}
+                      {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(item.subtotal))}
                     </span>
                   </div>
                 ))}
+              </div>
+
+              {/* BOTÃO NOVO AQUI */}
+              <div className="mt-4 flex justify-end border-t border-gray-100 pt-4">
+                <Link to={`/orders/${order.id}`}>
+                  <Button variant="secondary" className="text-sm">Ver detalhes</Button>
+                </Link>
               </div>
 
             </div>

@@ -1,4 +1,5 @@
-export type Role = 'USER' | 'ADMIN';
+// Backend usa CUSTOMER | ADMIN
+export type Role = 'CUSTOMER' | 'ADMIN';
 
 export interface UserResponse {
   id: string;
@@ -49,7 +50,6 @@ export interface UpdateCartItemRequest { quantity: number; }
 // ─── Frete (Shipping) ──────────────────────────────────────────
 export interface ShippingQuoteRequest { cep: string; subtotal: number; }
 
-// Campos tornados opcionais para evitar erros se o backend usar nomes diferentes
 export interface ShippingOption {
   type: string;
   name?: string;
@@ -65,21 +65,45 @@ export interface ShippingQuoteResponse {
 }
 
 // ─── Pedidos (Orders) ──────────────────────────────────────────
+export type OrderStatus = 'PENDING' | 'PAID' | 'SHIPPED' | 'CANCELED';
+
+export interface OrderItemResponse {
+  id: number;
+  productId: number;
+  productName: string;
+  unitPrice: number;
+  quantity: number;
+  subtotal: number;
+}
+
 export interface OrderResponse {
   id: number;
   userId: number;
-  status: 'PENDING' | 'PAID' | 'SHIPPED' | 'CANCELED';
+  status: OrderStatus;
   total: number;
   discount: number;
   shippingCost: number;
   couponCode: string | null;
   createdAt: string;
-  items: {
-    id: number;
-    productId: number;
-    productName: string;
-    unitPrice: number;
-    quantity: number;
-    subtotal: number;
-  }[];
+  items: OrderItemResponse[];
+}
+
+// ─── Pagamentos ───────────────────────────────────────────────
+// O backend envia apenas PENDING e CONFIRMED (não existe PAID/FAILED/EXPIRED)
+export type PaymentMethod = 'PIX' | 'CREDIT_CARD';
+export type PaymentStatus = 'PENDING' | 'CONFIRMED';
+
+export interface PaymentResponse {
+  id: number;
+  orderId: number;
+  method: PaymentMethod;
+  status: PaymentStatus;
+  amount: number;
+  pixCopyPaste: string | null;
+  pixQrCodeBase64: string | null;
+  gatewayRef: string | null;
+  clientSecret: string | null;
+  createdAt: string;
+  expiresAt: string | null;
+  confirmedAt: string | null;
 }

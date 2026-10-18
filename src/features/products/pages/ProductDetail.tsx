@@ -12,7 +12,7 @@ export function ProductDetail() {
   // 1. Busca o produto
   const { data: product, isLoading, isError } = useQuery({
     queryKey: ['product', id],
-    queryFn: () => productApi.getById(id as string),
+    queryFn: () => productApi.getById(Number(id)),
     enabled: !!id,
   });
 

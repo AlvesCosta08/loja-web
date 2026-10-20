@@ -7,11 +7,11 @@ services:
     repo: https://github.com/AlvesCosta08/loja-web
     branch: main
     buildCommand: npm ci && npm run build
-    staticPublishPath: ./dist
+    staticPublishPath: dist          # 👈 Correção: sem a barra no início
     autoDeploy: true
     envVars:
       - key: VITE_API_URL
-        value: https://loja-api.onrender.com
+        value: https://loja-api-i53b.onrender.com   # 👈 Correção: URL real do backend
     routes:
       - type: rewrite
         source: /*

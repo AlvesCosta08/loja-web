@@ -1,31 +1,48 @@
 import { api } from '@/shared/lib/axios';
-import type { PageResponse, OrderResponse, ProductResponse, UserResponse, Role } from '@/shared/types/api';
-
-export interface DashboardResponse {
-  totalOrders: number;
-  totalRevenue: number;
-  averageTicket: number;
-  pendingOrders: number;
-  lowStockProducts: number;
-}
+import type {
+  Role,
+  UserResponse,
+  PageResponse,
+  OrderResponse,
+  OrderStatus,
+  ProductResponse,
+  DashboardStats,
+} from '@/shared/types/api';
 
 export const adminApi = {
-  getDashboard: () =>
-    api.get<DashboardResponse>('/admin/dashboard').then((r) => r.data),
+  getUsers: async (): Promise<PageResponse<UserResponse>> => {
+    const { data } = await api.get<PageResponse<UserResponse>>('/admin/users');
+    return data;
+  },
 
-  getOrders: () =>
-    api.get<PageResponse<OrderResponse>>('/admin/orders').then((r) => r.data),
+  updateUserRole: async (id: number, role: Role): Promise<UserResponse> => {
+    const { data } = await api.patch<UserResponse>(`/admin/users/${id}/role`, { role });
+    return data;
+  },
 
-  getLowStockProducts: () =>
-    api.get<ProductResponse[]>('/admin/products/low-stock').then((r) => r.data),
+  getOrders: async (): Promise<PageResponse<OrderResponse>> => {
+    const { data } = await api.get<PageResponse<OrderResponse>>('/admin/orders');
+    return data;
+  },
 
-  restockProduct: (id: number, quantity: number) =>
-    api.post<ProductResponse>(`/admin/products/${id}/restock`, { quantity }).then((r) => r.data),
+  updateOrderStatus: async (id: number, status: OrderStatus): Promise<OrderResponse> => {
+    const { data } = await api.patch<OrderResponse>(`/admin/orders/${id}/status`, { status });
+    return data;
+  },
 
-  // Adicionado para a tela AdminUsers
-  getUsers: () =>
-    api.get<PageResponse<UserResponse>>('/admin/users').then((r) => r.data),
+  getProducts: async (): Promise<PageResponse<ProductResponse>> => {
+    const { data } = await api.get<PageResponse<ProductResponse>>('/admin/products');
+    return data;
+  },
 
-  updateUserRole: (id: string, role: Role) =>
-    api.patch<UserResponse>(`/admin/users/${id}/role`, { role }).then((r) => r.data),
+  restockProduct: async (id: number, quantity: number): Promise<ProductResponse> => {
+    const { data } = await api.patch<ProductResponse>(`/admin/products/${id}/restock`, { quantity });
+    return data;
+  },
+
+  // 👇 ADICIONADO: faltava este método
+  getDashboard: async (): Promise<DashboardStats> => {
+    const { data } = await api.get<DashboardStats>('/admin/dashboard');
+    return data;
+  },
 };

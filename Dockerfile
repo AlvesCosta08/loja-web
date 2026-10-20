@@ -1,39 +1,34 @@
 # ============================================
 # ESTÁGIO 1 — BUILD
-# Compila o projeto e gera o .jar
 # ============================================
-FROM maven:3.9-eclipse-temurin-21 AS build
+FROM node:20-alpine AS build
 WORKDIR /app
 
-# Copia só o pom.xml primeiro (cache de dependências)
-COPY pom.xml .
-RUN mvn -B -Dmaven.wagon.http.retryHandler.count=5 \
-           -Dmaven.wagon.http.retryHandler.requestSentEnabled=true \
-           dependency:go-offline
+# Cache de dependências
+COPY package.json package-lock.json ./
+RUN npm ci
 
-# Agora copia o código e builda
-COPY src ./src
-RUN mvn -B -Dmaven.wagon.http.retryHandler.count=5 \
-           -Dmaven.wagon.http.retryHandler.requestSentEnabled=true \
-           clean package -DskipTests
+# Copia o resto e builda
+COPY . .
+# VITE_API_URL é build-time; passe via --build-arg
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+RUN npm run build
 
 # ============================================
-# ESTÁGIO 2 — RUNTIME
-# Só o jar, imagem enxuta
+# ESTÁGIO 2 — RUNTIME (Nginx)
 # ============================================
-FROM eclipse-temurin:21-jre-alpine
-WORKDIR /app
+FROM nginx:1.27-alpine
+WORKDIR /usr/share/nginx/html
 
-# Usuário não-root (segurança)
-RUN addgroup -S app && adduser -S app -G app
-USER app
+# Remove o conteúdo default do Nginx
+RUN rm -rf ./*
 
-# Copia só o jar do estágio 1
-COPY --from=build /app/target/*.jar app.jar
+# Copia o build do Vite
+COPY --from=build /app/dist .
 
-EXPOSE 8080
+# Configuração do Nginx: SPA fallback + cache
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Fallback de porta (Render injeta $PORT; SERVER_PORT tem prioridade no YAML)
-ENV SERVER_PORT=8080
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

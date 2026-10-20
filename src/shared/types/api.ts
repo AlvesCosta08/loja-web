@@ -111,3 +111,12 @@ export interface PaymentResponse {
   expiresAt: string | null;
   confirmedAt: string | null;
 }
+
+// ─── Admin Dashboard ───────────────────────────────────────────
+export interface DashboardStats {
+  totalOrders: number;
+  totalRevenue: number;
+  averageTicket: number;
+  pendingOrders: number;
+  lowStockProducts: number;
+}

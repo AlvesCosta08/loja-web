@@ -12,7 +12,8 @@ export function AdminUsers() {
   });
 
   const roleMutation = useMutation({
-    mutationFn: ({ id, role }: { id: string; role: Role }) =>
+    // 👇 CORRIGIDO: id agora é number (era string)
+    mutationFn: ({ id, role }: { id: number; role: Role }) =>
       adminApi.updateUserRole(id, role),
     onSuccess: () => {
       toast.success('Role do usuário atualizada!');
@@ -51,7 +52,6 @@ export function AdminUsers() {
                 <td className="px-6 py-4">{user.email}</td>
                 <td className="px-6 py-4">
                   <select
-                    /* 👇 ALTERAÇÃO AQUI: user.name em vez de user.id */
                     aria-label={`Role do usuário ${user.name}`}
                     value={user.role}
                     disabled={roleMutation.isPending}

@@ -1,7 +1,13 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useAuthStore } from './store';
+import type { UserResponse } from '@/shared/types/api';
 
-const mockUser = { id: '1', name: 'João', email: 'joao@teste.com', role: 'CUSTOMER' as const };
+const mockUser: UserResponse = {
+  id: 1,
+  name: 'João',
+  email: 'joao@teste.com',
+  role: 'CUSTOMER',
+};
 
 describe('authStore', () => {
   beforeEach(() => {
